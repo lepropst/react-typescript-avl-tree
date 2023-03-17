@@ -1,8 +1,53 @@
 * {margin: 0; padding: 0;}
-
-.tree ul {
-	padding-top: 20px; position: relative;
+.header {display: block;
+	width: auto;
+	background: #000;
+	height:auto;
+	padding: 2em;
+	color:white;
+}
+.single-letter {
+	display: flex;
+	flex-direction: column;
+	margin: auto;
+	width: 20em;
+	align-items:flex-start;
 	
+	
+}
+.header >div> button {
+	background-color: inherit;
+	border-bottom: 3px solid teal;
+	margin:.5em;
+	color:white;
+	padding-left: 4px;padding-right: 4px;
+	padding-top: 2px;padding-bottom: 2px;
+}
+.header > * {
+	margin-left: auto;
+	margin-right: auto;
+	width: auto;
+}
+.single-letter > input {
+	width: 2em;
+
+}
+.label {
+	width: auto;
+	background-color: aqua;
+	color: #000
+}
+.tree-container {
+	display: flex;
+	flex-direction: column;
+	margin: 4em;
+}
+span {
+	margin: 2em;padding: 2em;
+}
+.tree ul {
+	padding-top: 20px;
+  position: relative;
 	transition: all 0.5s;
 	-webkit-transition: all 0.5s;
 	-moz-transition: all 0.5s;
@@ -13,7 +58,6 @@
 	list-style-type: none;
 	position: relative;
 	padding: 20px 5px 0 5px;
-	
 	transition: all 0.5s;
 	-webkit-transition: all 0.5s;
 	-moz-transition: all 0.5s;

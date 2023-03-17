@@ -21,65 +21,103 @@ export default class Tree<K, V> {
     }
     return 0;
   }
-  public insert(key: K, value?: V) {
-    this.root = this._insert(key, value, this.root);
+  public insert(
+    key: K,
+    value?: V,
+    unbalanced?: boolean,
+    report?: (str: string) => void
+  ) {
+    const { root, message } = this._insert(
+      key,
+      value,
+      this.root,
+      unbalanced,
+      report
+    );
+    this.root = root;
     this._size++;
+    return message;
   }
   private _insert(
     key: K,
     value: V | undefined,
-    root: Node<K, V> | null
-  ): Node<K, V> {
+    root: Node<K, V> | null,
+    unbalanced?: boolean,
+    report?: (str: string) => void
+  ): { root: Node<K, V>; message: string } {
+    let str = "inserting key: " + key + " \n ";
     if (root === null) {
-      return new Node(key, value);
+      str += " no root present \n";
+      return {
+        root: new Node(key, value),
+        message: str,
+      };
     }
     const comparison = this.compare(key, root.key);
+
     if (comparison < 0) {
-      root.left = this._insert(key, value, root.left);
+      const { root: r } = this._insert(key, value, root.left);
+      root.left = r;
+      str += "insertig left \n";
     } else if (comparison > 0) {
-      root.right = this._insert(key, value, root.right);
+      const { root: r } = this._insert(key, value, root.right);
+      root.right = r;
+      str += "insertig right \n";
     } else {
       this._size--;
-      return root;
+      str += "insertig root \n";
+      return { root: root, message: str };
     }
     root.height = Math.max(root.leftHeight, root.rightHeight) + 1;
+    str += "height " + root.height + "\n";
     const balanceState = this.getBalanceState(root);
-    if (balanceState === BalanceState.UNBALANCED_LEFT) {
-      // Left left case
-      if (
-        this.getBalanceState(<Node<K, V>>root.left) === BalanceState.BALANCED ||
-        this.getBalanceState(<Node<K, V>>root.left) ===
-          BalanceState.SLIGHTLY_UNBALANCED_LEFT
-      ) {
-        console.log("left left case");
-        return root.rotateRight();
-      }
-      // Left right case
-      console.log("Left right case");
-      // this._getBalanceState(root.left) === BalanceState.SLIGHTLY_UNBALANCED_RIGHT
-      root.left = (<Node<K, V>>root.left).rotateLeft();
-      return root.rotateRight();
-    }
+    str += "balanced state " + balanceState + " \n ";
+    if (!unbalanced)
+      if (balanceState === BalanceState.UNBALANCED_LEFT) {
+        // Left left case
+        if (
+          this.getBalanceState(<Node<K, V>>root.left) ===
+            BalanceState.BALANCED ||
+          this.getBalanceState(<Node<K, V>>root.left) ===
+            BalanceState.SLIGHTLY_UNBALANCED_LEFT
+        ) {
+          str += "rotate right \n ";
+          return { root: root.rotateRight(), message: str };
+        }
+        // Left right case
 
-    if (balanceState === BalanceState.UNBALANCED_RIGHT) {
-      // Right right case
-      if (
-        this.getBalanceState(<Node<K, V>>root.right) ===
-          BalanceState.BALANCED ||
-        this.getBalanceState(<Node<K, V>>root.right) ===
-          BalanceState.SLIGHTLY_UNBALANCED_RIGHT
-      ) {
-        console.log("right right case");
-        return root.rotateLeft();
-      }
-      // Right left case
-      // this._getBalanceState(root.right) === BalanceState.SLIGHTLY_UNBALANCED_LEFT
-      console.log("Right left case");
-      root.right = (<Node<K, V>>root.right).rotateRight();
-      return root.rotateLeft();
-    }
+        str += "rotate right \n ";
 
-    return root;
+        // this.getBalanceState(root.left!) ===
+        // BalanceState.SLIGHTLY_UNBALANCED_RIGHT;
+        root.left = (<Node<K, V>>root.left).rotateLeft();
+        str += "rotate right \n";
+        return { root: root.rotateRight(), message: str };
+      }
+    if (!unbalanced)
+      if (balanceState === BalanceState.UNBALANCED_RIGHT) {
+        // Right right case
+        if (
+          this.getBalanceState(<Node<K, V>>root.right) ===
+            BalanceState.BALANCED ||
+          this.getBalanceState(<Node<K, V>>root.right) ===
+            BalanceState.SLIGHTLY_UNBALANCED_RIGHT
+        ) {
+          console.log("right right case");
+          str += "rotate left \n ";
+          return { root: root.rotateLeft(), message: str };
+        }
+        // Right left case
+        // this._getBalanceState(root.right) === BalanceState.SLIGHTLY_UNBALANCED_LEFT
+        console.log("Right left case");
+        root.right = (<Node<K, V>>root.right).rotateRight();
+        str += "rotate left \n ";
+
+        return { root: root.rotateLeft(), message: str };
+      }
+
+    if (report) report(str);
+    return { root: root, message: str };
   }
 
   public get(key: K): V | undefined | null {
