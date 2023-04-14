@@ -1,4 +1,8 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## This is a rudimentary NextJs application used to constrtuct, display, and show the steps of constructing an AVL Tree using a heap.
+
+## Below are instructions for running the program. Any modificaations and contributtiions are welcome and the author can be reached at
+
+#### propstle@gmail.com
 
 ## Getting Started
 
